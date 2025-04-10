@@ -1,0 +1,42 @@
+# Diretórios de build
+/dist
+/build
+
+# Dependências
+/node_modules
+
+# Arquivos temporários de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos de log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cache de ferramentas
+.cache/
+.vite/
+.next/
+out/
+
+# Configurações do editor/IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ambiente e variáveis sensíveis
+.env
+.env.*.local
+
+# Arquivos de produção gerados
+*.local
+*.lock
+
+# Outros arquivos desnecessários
+*.zip
+*.tgz
+
+# Histórico do navegador integrado
+/.history
