@@ -1,12 +1,14 @@
 {
-    "name": "portal-ti-backend",
+    "name": "portal-skills-backend",
     "version": "1.0.0",
     "main": "server.js",
     "dependencies": {
       "express": "^4.18.2",
       "cors": "^2.8.5",
       "mysql2": "^3.2.4",
-      "ldapjs": "^2.2.3"
+      "ldapjs": "^2.2.3",
+      "dotenv": "^16.0.3",
+      "jsonwebtoken": "^9.0.0"
     },
     "scripts": {
       "start": "node server.js"

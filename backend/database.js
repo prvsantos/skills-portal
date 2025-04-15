@@ -4,7 +4,7 @@ const pool = mysql.createPool({
   host: "database",
   user: "portal_user",
   password: "portal_password",
-  database: "portal_ti"
+  database: "portal_skills"
 });
 
 async function getEmployees() {

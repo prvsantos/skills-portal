@@ -1,15 +1,25 @@
 version: '3.8'
+
+networks:
+  portal_skills:
+    driver: bridge
+
+volumes:
+  db_data:
+
 services:
   database:
     image: mysql:5.7
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: portal_ti
+      MYSQL_DATABASE: portal_skills
       MYSQL_USER: portal_user
       MYSQL_PASSWORD: portal_password
     ports:
       - "3306:3306"
+    networks:
+      - portal_skills
     volumes:
       - db_data:/var/lib/mysql
 
@@ -19,6 +29,8 @@ services:
       - "5000:5000"
     depends_on:
       - database
+    networks:
+      - portal_skills
     environment:
       - NODE_ENV=production
 
@@ -28,7 +40,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:80"
+    networks:
+      - portal_skills
     restart: always
-
-volumes:
-  db_data:
