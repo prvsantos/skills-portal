@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './styles.css';
 
-// Dados simulados dos colaboradores
+// Simulação de dados estáticos para a busca
 const colaboradores = [
   {
     nome: 'Ana Souza',
@@ -37,6 +37,8 @@ const colaboradores = [
 
 export default function App() {
   const [busca, setBusca] = useState('');
+  const [novaSkill, setNovaSkill] = useState('');
+  const [minhasSkills, setMinhasSkills] = useState([]);
   const [darkMode, setDarkMode] = useState(window.matchMedia('(prefers-color-scheme: dark)').matches);
   const [modalAberto, setModalAberto] = useState(false);
   const [usuario, setUsuario] = useState('');
@@ -46,7 +48,7 @@ export default function App() {
   const [usuarioLdap, setUsuarioLdap] = useState('');
   const [senhaLdap, setSenhaLdap] = useState('');
 
-
+  // Aplica tema e imagem de fundo
   useEffect(() => {
     document.body.className = darkMode ? 'dark' : 'light';
     document.body.style.backgroundImage = `url('/background.png')`;
@@ -59,6 +61,7 @@ export default function App() {
     `${colab.nome} ${colab.area} ${colab.skills} ${colab.email}`.toLowerCase().includes(busca.toLowerCase())
   );
 
+  // Autenticação LDAP
   const autenticar = async () => {
     try {
       const res = await fetch('http://localhost:5000/login', {
@@ -68,9 +71,9 @@ export default function App() {
       });
 
       if (res.ok) {
-        const data = await res.json();
         setAutenticado(true);
         setModalAberto(false);
+        carregarSkillsUsuario();
       } else {
         alert('Usuário ou senha inválidos.');
       }
@@ -79,13 +82,47 @@ export default function App() {
     }
   };
 
+  // Recupera as skills cadastradas do usuário autenticado
+  const carregarSkillsUsuario = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/employees/skills?username=${usuario}`);
+      const data = await res.json();
+      setMinhasSkills(data.map(item => item.skill));
+    } catch (error) {
+      console.error("Erro ao carregar skills:", error);
+    }
+  };
+
+  // Envia nova skill para o backend
+  const salvarNovaSkill = async () => {
+    if (!novaSkill.trim()) return alert("Digite uma skill válida!");
+
+    try {
+      const res = await fetch('http://localhost:5000/employees/skills', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: usuario, skill: novaSkill.trim() })
+      });
+
+      if (res.ok) {
+        alert("Skill cadastrada com sucesso!");
+        setNovaSkill('');
+        carregarSkillsUsuario(); // Atualiza lista após salvar
+      } else {
+        alert("Erro ao salvar a skill.");
+      }
+    } catch (error) {
+      console.error("Erro ao cadastrar skill:", error);
+      alert("Falha ao conectar com o servidor.");
+    }
+  };
+
   return (
     <div className="container">
-      {/* Cabeçalho com botões */}
+      {/* Cabeçalho fixo */}
       <div className="header">
         <h1 className="titulo-centralizado">Portal de Competências</h1>
 
-        {/* Botões fixos e alinhados */}
         <div className="header-buttons">
           <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)}>
             {darkMode ? '🌞 Tema Claro' : '🌙 Tema Escuro'}
@@ -97,7 +134,6 @@ export default function App() {
             </button>
           )}
 
-          {/* 🔧 LDAP TEST - Botão de teste da conexão LDAP */}
           <button className="login-btn" onClick={() => setModalLdap(true)}>
             🔧 Testar LDAP
           </button>
@@ -116,7 +152,25 @@ export default function App() {
         onChange={(e) => setBusca(e.target.value)}
       />
 
-      {/* Renderiza os cards apenas se houver busca */}
+      {/* Área de adicionar skill */}
+      {autenticado && (
+        <div className="add-skill-container">
+          <h3>Minhas Skills</h3>
+          <ul>
+            {minhasSkills.map((s, i) => <li key={i}>{s}</li>)}
+          </ul>
+          <input
+            type="text"
+            placeholder="Nova skill"
+            value={novaSkill}
+            onChange={(e) => setNovaSkill(e.target.value)}
+            className="input-skill"
+          />
+          <button onClick={salvarNovaSkill} className="btn-salvar-skill">Salvar Skill</button>
+        </div>
+      )}
+
+      {/* Lista filtrada */}
       {busca && (
         <div className="employee-list">
           {filtrados.length > 0 ? (
@@ -124,7 +178,13 @@ export default function App() {
               <div key={index} className="employee-card">
                 <strong>{colab.nome}</strong>
                 <p><em>Área:</em> {colab.area}</p>
-                <p><em>Skills:</em> {colab.skills}</p>
+                <p><em>Skills:</em></p>
+                <div className="badges">
+                  {colab.skills.split(',').map((skill, i) => (
+                    <span key={i} className="badge">{skill.trim()}</span>
+                  ))}
+                </div>
+
                 <p><em>E-mail:</em> {colab.email}</p>
               </div>
             ))
@@ -134,7 +194,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Modal de Login */}
+      {/* Modal de login */}
       {modalAberto && (
         <div className="modal-overlay">
           <div className="modal">
@@ -147,6 +207,7 @@ export default function App() {
         </div>
       )}
 
+      {/* Modal LDAP */}
       {modalLdap && (
         <div className="modal-overlay">
           <div className="modal">
