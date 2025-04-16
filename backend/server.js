@@ -35,11 +35,20 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-// Rota para adicionar skills
+// Rota para adicionar skills ao colaborador
 app.post("/employees/skills", async (req, res) => {
-  const { userId, skill } = req.body;
-  await addSkill(userId, skill);
-  res.json({ message: "Skill adicionada com sucesso!" });
+  const { username, skill } = req.body;
+  if (!username || !skill) {
+    return res.status(400).json({ message: "Dados incompletos" });
+  }
+
+  try {
+    await addSkill(username, skill);
+    res.json({ message: "Skill adicionada com sucesso!" });
+  } catch (err) {
+    console.error("Erro ao adicionar skill:", err);
+    res.status(500).json({ message: "Erro ao adicionar skill" });
+  }
 });
 
 // 🔧 LDAP TEST - Rota temporária para testar a conexão LDAP
@@ -77,6 +86,20 @@ app.post('/ldap-test', (req, res) => {
       });
     });
   });
+});
+
+// Rota para buscar skills de um colaborador específico
+app.get("/employees/skills", async (req, res) => {
+  const { username } = req.query;
+  if (!username) return res.status(400).json({ error: "Usuário não informado" });
+
+  try {
+    const skills = await getSkillsByUsername(username);
+    res.json(skills);
+  } catch (error) {
+    console.error("Erro ao buscar skills:", error);
+    res.status(500).json({ error: "Erro interno" });
+  }
 });
 
 app.listen(5000, () => console.log("Backend rodando na porta 5000"));
