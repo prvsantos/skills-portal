@@ -6,7 +6,7 @@ async function ldapAuth(username, password) {
       url: process.env.LDAP_URL || "ldap://ldapbr.cencosud.corp"
     });
 
-    const searchBase = "OU=Brasil,DC=cencosud,DC=corp";
+    const searchBase = "OU=Usuarios,OU=Brasil,DC=cencosud,DC=corp";
     const searchOptions = {
       scope: "sub",
       filter: `(sAMAccountName=${username})`

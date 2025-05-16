@@ -61,7 +61,7 @@ export default function App() {
     `${colab.nome} ${colab.area} ${colab.skills} ${colab.email}`.toLowerCase().includes(busca.toLowerCase())
   );
 
-  // Autenticação LDAP
+  // Função para autenticar via backend LDAP
   const autenticar = async () => {
     try {
       const res = await fetch('http://localhost:5000/login', {
@@ -82,7 +82,7 @@ export default function App() {
     }
   };
 
-  // Recupera as skills cadastradas do usuário autenticado
+  // Busca skills do usuário autenticado
   const carregarSkillsUsuario = async () => {
     try {
       const res = await fetch(`http://localhost:5000/employees/skills?username=${usuario}`);
@@ -144,6 +144,7 @@ export default function App() {
         O objetivo do Portal é encontrar profissionais qualificados para atuar em demandas e/ou projetos baseados em tecnologias específicas, dando mais visibilidade e oportunidades para os colaboradores internos.
       </p>
 
+      {/* Descrição do sistema */}
       <input
         type="text"
         placeholder="Buscar por nome, área, skill ou e-mail..."
@@ -152,7 +153,7 @@ export default function App() {
         onChange={(e) => setBusca(e.target.value)}
       />
 
-      {/* Área de adicionar skill */}
+      {/* Cadastro de skills visível apenas para autenticado */}
       {autenticado && (
         <div className="add-skill-container">
           <h3>Minhas Skills</h3>
@@ -170,14 +171,14 @@ export default function App() {
         </div>
       )}
 
-      {/* Lista filtrada */}
+      {/* Lista de colaboradores apenas quando há busca */}
       {busca && (
         <div className="employee-list">
           {filtrados.length > 0 ? (
             filtrados.map((colab, index) => (
               <div key={index} className="employee-card">
                 <strong>{colab.nome}</strong>
-                <p><em>Área:</em> {colab.area}</p>
+                <p><em>Setor:</em> {colab.area}</p>
                 <p><em>Skills:</em></p>
                 <div className="badges">
                   {colab.skills.split(',').map((skill, i) => (
@@ -194,7 +195,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Modal de login */}
+      {/* Modal de login com inputs seguros */}
       {modalAberto && (
         <div className="modal-overlay">
           <div className="modal">
@@ -207,7 +208,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Modal LDAP */}
+      {/* Modal de teste de LDAP com segurança */}
       {modalLdap && (
         <div className="modal-overlay">
           <div className="modal">
