@@ -175,12 +175,43 @@ body::before {
   font-weight: bold;
 }
 
+/* Estilo para o ícone do LinkedIn */
+.linkedin-container {
+  display: flex;
+  align-items: center;
+}
+
+.linkedin-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: #0077b5;
+}
+
+.linkedin-icon {
+  margin-left: 5px;
+  transition: transform 0.2s ease;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
+
+.linkedin-link:hover .linkedin-icon {
+  transform: scale(1.2);
+}
+
 /* Badges de skills */
 .badges {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 5px;
+  margin: 0;
+}
+
+.inline-badges {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
 }
 
 .badge {
@@ -190,6 +221,8 @@ body::before {
   border-radius: 20px;
   font-size: 0.85rem;
   border: 1px solid #ccc;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .light .badge {

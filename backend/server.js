@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
-const ldapAuth = require("./auth");
 const { getEmployees, addSkill } = require("./database");
 const authRoute = require('./routes/authRoute');
 
